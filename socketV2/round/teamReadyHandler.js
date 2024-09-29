@@ -1,8 +1,9 @@
 const { Socket, Server } = require("socket.io");
 const eventNames = require("../eventNames");
 const { getGame, storeGameRequest } = require("../../api/gameApis");
-const { createCards, dealCardsForTeam } = require("../helpers/createCards");
+// const { createCards, dealCardsForTeam } = require("../helpers/createCards");
 const roundStages = require("../helpers/roundStages");
+const { createCards, dealCardsForTeam } = require("../helpers/createCards2");
 
 /**
  * @param {Server} io
@@ -17,19 +18,7 @@ module.exports = (io, socket) => {
       let { currentRound, config, history } = game;
       let updatedGame = { ...game };
 
-      // if (
-      //   currentRound &&
-      //   currentRound.stage &&
-      //   !(
-      //     currentRound.stage === roundStages.READY ||
-      //     currentRound.stage === roundStages.RESULT
-      //   )
-      // ) {
-      //   return;
-      // }
-
       let updatedCurrentRound = { ...currentRound };
-      console.log("Current round information >>>", currentRound);
 
       if (!("index" in currentRound)) {
         // TODO: set up current round
@@ -84,8 +73,6 @@ module.exports = (io, socket) => {
         };
 
         if (updatedCurrentRound.index === 0) {
-          console.log("game can be started");
-
           updatedCurrentRound = {
             ...updatedCurrentRound,
             stage: roundStages.GENERATE_CARDS,
@@ -99,8 +86,6 @@ module.exports = (io, socket) => {
           let updatedCards = {};
           let createdCards = await createCards(config);
           let cardsData = dealCardsForTeam(config, createdCards);
-          console.log("Cards >>>", createdCards);
-          console.log("cards data >>>", cardsData);
 
           updatedCards = { ...cardsData };
           updatedGame = {
@@ -109,7 +94,6 @@ module.exports = (io, socket) => {
             currentRound: updatedCurrentRound,
           };
           await storeGameRequest(updatedGame);
-          console.log("trying to store");
           io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, game.id);
         }
 
@@ -123,7 +107,6 @@ module.exports = (io, socket) => {
         await storeGameRequest(updatedGame);
         io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, game.id);
 
-        console.log("updated current round >>>", updatedCurrentRound);
         await new Promise((resolve) =>
           setTimeout(resolve, updatedCurrentRound.instantSessionLength * 1000)
         ); // wait for 30 seconds

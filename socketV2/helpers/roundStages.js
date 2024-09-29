@@ -1,4 +1,7 @@
-module.exports = {
+/**
+ * @enum {string}
+ */
+const roundStages = {
   READY: "ready",
   GENERATE_CARDS: "generate_cards",
   INSTANT_CARD_SESSION: "instant_card_session",
@@ -9,3 +12,5 @@ module.exports = {
   CALCULATE_RESULT: "calculate_result",
   RESULT: "result",
 };
+
+module.exports = roundStages;

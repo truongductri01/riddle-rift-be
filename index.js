@@ -1,21 +1,20 @@
 const express = require("express");
 const cors = require("cors");
 const { Server } = require("socket.io");
-const { getGame, storeGameRequest } = require("./api/gameApis");
 
 const app = express();
 const http = require("http");
-const getGameStatusHandler = require("./socket/getGameStatusHandler");
-const confirmPlayerIdHandler = require("./socket/confirmPlayerIdHandler");
-const playerJoinHandler = require("./socket/playerJoinHandler");
-const teamSelectHandler = require("./socket/teamSelectHandler");
-const createGameHandler = require("./socket/createGameHandler");
-const disconnectHandler = require("./socket/disconnectHandler");
-const teamReadyHandler = require("./socket/round/teamReadyHandler");
-const selectCardsForRoundHandler = require("./socket/round/selectCardsForRoundHandler");
-const answerRiddleHandler = require("./socket/round/answerRiddleHandler");
-const winnerAttackHandler = require("./socket/round/winnerAttackHandler");
-const beforeDisconnectHandler = require("./socket/beforeDisconnectHandler");
+const socketV2 = require("./socketV2/socketV2");
+const actionHandler = require("./socketV2/actionHandler/actionHandler");
+const mockGame = require("./socketV2/actionHandler/mockGame");
+const {
+  createCards,
+  dealCardsForTeam,
+} = require("./socketV2/helpers/createCards2");
+const cardTypes = require("./socketV2/actionHandler/types/cardTypes");
+const { getGame } = require("./api/gameApis");
+const mockGame1 = require("./socketV2/mockGames/mockGame1");
+const errorHandler = require("./socketV2/errorHandler");
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -28,70 +27,48 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", async (req, res) => {
-  let game = await getGame();
-  await storeGameRequest({ testing: true });
+  let { gameId } = req.query;
 
-  res.json(game);
+  if (gameId) {
+    return res.json(await getGame(gameId));
+  } else {
+    return res.json({});
+  }
 });
 
-// socket for games
-const eventNames = {
-  on: {
-    // confirm player
-    confirmPlayerRequest: "confirm-player-request",
+app.get("/test-create-card", async (req, res) => {
+  let config = {
+    cardsAmountConfig: { [cardTypes.ATTACK]: 5, [cardTypes.DEFENSE]: 3 },
+    teams: [
+      { id: "team1", name: "" },
+      { id: "team2", name: "" },
+    ],
+    maxCard: 3,
+  };
+  let cards = await createCards(config);
 
-    createGameRequest: "create-game-request",
-    getGameStatusEvent: "get-game-status",
-    playerJoinRequest: "player-join-request",
-    teamSelectRequest: "team-select-request",
-  },
-  emit: {
-    confirmPlayerResponse: "confirm-player-response",
+  let cardsAfterDealt = dealCardsForTeam(config, cards);
 
-    createGameResponse: "create-game-response",
-    gameStatus: "game-status",
-    playerJoinResponse: "player-join-response",
-    teamSelectResponse: "team-select-response",
+  return res.json(cardsAfterDealt);
+});
 
-    playerJoinTeam: "player-join-team",
-
-    gameStatusChange: "game-status-change",
-
-    error: "error",
-  },
-};
-let game = null;
+app.get("/test-card", async (req, res) => {
+  let game = mockGame1;
+  return res.json({
+    game,
+    newState: actionHandler(game.currentRound, game.teams, game.cards),
+  });
+});
 
 io.on("connection", async (socket) => {
   console.log("a user connected", socket.id);
   io.emit("testing", { data: "Welcome to RiddleRift" });
 
-  // create game
-  createGameHandler(io, socket);
-  // get the game status
-  getGameStatusHandler(io, socket);
-  // confirm player and store player id
-  confirmPlayerIdHandler(io, socket);
-  // player joined with name
-  playerJoinHandler(io, socket);
-  // team select
-  teamSelectHandler(io, socket);
-
-  // -- for round -- //
-  // team ready
-  teamReadyHandler(io, socket);
-  // select cards
-  selectCardsForRoundHandler(io, socket);
-  // answer riddle
-  answerRiddleHandler(io, socket);
-  // winner attack
-  winnerAttackHandler(io, socket);
-
-  // before-disconnect
-  beforeDisconnectHandler(io, socket);
-
-  //   disconnect
-  disconnectHandler(io, socket);
+  try {
+    socketV2(io, socket);
+  } catch (e) {
+    errorHandler(io, socket, "Error", `${e}`);
+  }
 });
 
 server.listen(8080, () => {

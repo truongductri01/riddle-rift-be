@@ -1,6 +1,6 @@
 const { db } = require("../firebase");
 const { collection, doc, setDoc, getDoc } = require("firebase/firestore");
-const gameStates = require("../socket/helpers/gameStates");
+const gameStates = require("../socketV2/helpers/gameStates");
 
 /**
  *
