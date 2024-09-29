@@ -4,6 +4,7 @@ const { getGame, storeGameRequest } = require("../../api/gameApis");
 const roundStages = require("../helpers/roundStages");
 const { generateMathEquationRiddle } = require("../helpers/riddles");
 const cardGenerateFactory = require("../actionHandler/cardGenerateFactory");
+const errorHandler = require("../errorHandler");
 
 /**
  *
@@ -14,8 +15,12 @@ module.exports = (io, socket) => {
   socket.on(
     eventNames.on.selectCardsForRound,
     async ({ teamId, selectedCards }, gameId = "game1") => {
-      await handleCardsSelect(gameId, teamId, selectedCards);
-      await handleAllTeamsReadyAndStartRound(gameId);
+      try {
+        await handleCardsSelect(gameId, teamId, selectedCards);
+        await handleAllTeamsReadyAndStartRound(gameId);
+      } catch (e) {
+        errorHandler(io, socket, "select-cards-error", `${e}`);
+      }
     }
   );
 
