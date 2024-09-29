@@ -28,7 +28,7 @@ const getGame = async (gameId = "game1") => {
       return gameSnapshot.data();
     }
   } catch (e) {
-    console.log("error >>>", e);
+    console.log("error with get game>>>", e);
     return {};
   }
 };

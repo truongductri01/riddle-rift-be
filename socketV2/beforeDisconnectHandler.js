@@ -3,10 +3,17 @@ const eventNames = require("./eventNames");
 
 module.exports = (io, socket) => {
   socket.on("before-disconnect", async (gameId = "game1") => {
+    if (!gameId) {
+      console.log("no game id to fetch for");
+      return;
+    }
+
+    console.log("disconnecting from game: >>>", gameId);
     let game = await getGame(gameId);
 
     if (!game || Object.keys(game).length === 0) {
       console.log("no game to disconnect from");
+      return;
     }
 
     let { socketToPlayers, players, teams } = game;
