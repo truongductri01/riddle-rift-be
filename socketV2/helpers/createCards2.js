@@ -19,7 +19,7 @@ const createCards = async (config) => {
     let amount = config.cardsAmountConfig[cardType];
     for (let i = 0; i < amount; i++) {
       cards.push(cardGenerateFactory(cardType, "", Date.now().toString()));
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 1));
     }
   }
 

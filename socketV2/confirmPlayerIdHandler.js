@@ -7,9 +7,7 @@ module.exports = (io, socket) => {
     eventNames.on.confirmPlayerRequest,
     async (playerId, gameId = "game1") => {
       try {
-        console.log("received player id >>>", playerId, gameId);
         let game = await getGame(gameId);
-        console.log("game name");
         const { socketToPlayers, players, teams } = game;
 
         let newPlayerId = playerId === null ? socket.id : playerId;

@@ -27,37 +27,54 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", async (req, res) => {
-  let { gameId } = req.query;
+  try {
+    let { gameId } = req.query;
 
-  if (gameId) {
-    return res.json(await getGame(gameId));
-  } else {
-    return res.json({});
+    if (gameId) {
+      return res.json(await getGame(gameId));
+    } else {
+      return res.json({});
+    }
+  } catch (e) {
+    return res.json({ error: `${e}` });
   }
 });
 
 app.get("/test-create-card", async (req, res) => {
-  let config = {
-    cardsAmountConfig: { [cardTypes.ATTACK]: 5, [cardTypes.DEFENSE]: 3 },
-    teams: [
-      { id: "team1", name: "" },
-      { id: "team2", name: "" },
-    ],
-    maxCard: 3,
-  };
-  let cards = await createCards(config);
+  try {
+    let config = {
+      cardsAmountConfig: {
+        [cardTypes.ATTACK]: 3,
+        [cardTypes.BLOCK_SWAP_HEALTH]: 1,
+        [cardTypes.DEFENSE]: 3,
+      },
+      teams: [
+        { id: "team1", name: "" },
+        { id: "team2", name: "" },
+      ],
+      maxCard: 3,
+    };
+    let cards = await createCards(config);
 
-  let cardsAfterDealt = dealCardsForTeam(config, cards);
+    let cardsAfterDealt = dealCardsForTeam(config, cards);
 
-  return res.json(cardsAfterDealt);
+    return res.json(cardsAfterDealt);
+  } catch (e) {
+    return res.json({ error: `${e}` });
+  }
 });
 
 app.get("/test-card", async (req, res) => {
-  let game = mockGame1;
-  return res.json({
-    game,
-    newState: actionHandler(game.currentRound, game.teams, game.cards),
-  });
+  try {
+    let game = mockGame1;
+    return res.json({
+      // game,
+      before: { ...game },
+      newState: actionHandler(game.currentRound, game.teams, game.cards),
+    });
+  } catch (e) {
+    return res.json({ error: `${e}` });
+  }
 });
 
 io.on("connection", async (socket) => {

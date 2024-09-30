@@ -5,7 +5,7 @@ const roundStages = require("../helpers/roundStages");
 const { generateMathEquationRiddle } = require("../helpers/riddles");
 const cardGenerateFactory = require("../actionHandler/cardGenerateFactory");
 const errorHandler = require("../errorHandler");
-
+const { handleActionBeforeResult } = require("./winnerAttackHandlerHelper");
 /**
  *
  * @param {Server} io
@@ -142,19 +142,15 @@ module.exports = (io, socket) => {
         });
         io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, game.id);
 
+        game = await getGame(gameId);
+        let { currentRound } = game;
         if (
-          !updatedCurrentRound.hasWinner &&
-          updatedCurrentRound.stage !== roundStages.RIDDLE
+          !currentRound.hasWinner &&
+          currentRound.stage !== roundStages.RESULT &&
+          currentRound.stage !== roundStages.WINNER_DECISION
         ) {
-          updatedCurrentRound = {
-            ...updatedCurrentRound,
-            stage: roundStages.RESULT,
-          };
-          await storeGameRequest({
-            ...game,
-            currentRound: updatedCurrentRound,
-          });
-          io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, game.id);
+          console.log("handle action from selectes card for round");
+          await handleActionBeforeResult(io, socket, gameId);
         }
       }
     }

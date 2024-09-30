@@ -26,23 +26,31 @@ module.exports = (currentRound, teams, cards) => {
   // Winner action should be a separate one
   // that can be combine with AttackAction to increase the damage (for now) => return a new Winner Action
 
-  if (
-    currentRound.stage !== roundStages.INSTANT_CARD_SESSION &&
-    currentRound.stage !== roundStages.CALCULATE_RESULT
-  ) {
-    throw new Error(
-      "Cannot execute actions unless for Instant Card or Result stage"
-    );
-  }
-
   // if instant stage
   if (currentRound.stage === roundStages.INSTANT_CARD_SESSION) {
     // based on the turnTeamId to get the cards being used
     // update the card of each team too
     // for draw, shuffle, or steal action
-  } else if (currentRound.stage === roundStages.CALCULATE_RESULT) {
+  } else {
+    console.log("calling to run the stage");
     return handleResultStageActions(currentRound, teams, cards);
   }
+};
+
+/**
+ *
+ * @param {Array<BaseAction>} list
+ * @param {BaseAction} actionToRemove
+ */
+const removeActionFromList = (list, actionToRemove) => {
+  let newList = [];
+  list.forEach((action) => {
+    if (action.actionDetail.id !== actionToRemove.actionDetail.id) {
+      newList.push[action];
+    }
+  });
+
+  return newList;
 };
 
 /**
@@ -134,6 +142,15 @@ function handleResultStageActions(currentRound, teams, cards) {
               targetId,
               cardInfo.id,
               cardInfo.targets ?? []
+            );
+
+            counteredActions = removeActionFromList(
+              counteredActions,
+              card.toAction()
+            );
+            uselessActions = removeActionFromList(
+              uselessActions,
+              card.toAction()
             );
 
             activeActions.push(card.toAction());

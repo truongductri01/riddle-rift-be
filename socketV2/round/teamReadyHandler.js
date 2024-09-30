@@ -17,7 +17,7 @@ module.exports = (io, socket) => {
     async (teamId, gameId = "game1") => {
       try {
         let game = await getGame(gameId);
-        let { currentRound, config, history } = game;
+        let { currentRound, config } = game;
         let updatedGame = { ...game };
 
         let updatedCurrentRound = { ...currentRound };
@@ -29,7 +29,7 @@ module.exports = (io, socket) => {
             stage: roundStages.READY,
             readyTeams: [],
             cardsToUsed: {},
-            instantSessionLength: 3, // in seconds
+            instantSessionLength: 0, // in seconds
             riddleSessionLength: 30, // in seconds
             hasWinner: false,
             winnerTeamId: "",
@@ -58,7 +58,6 @@ module.exports = (io, socket) => {
         // see if the game can be started for the very first round
         if (updatedCurrentRound.readyTeams.length === config.teams.length) {
           // clean up the current Round?
-          let updatedHistory = [...history, { ...updatedCurrentRound }];
           updatedCurrentRound = {
             ...updatedCurrentRound,
             stage: roundStages.READY,
@@ -89,6 +88,8 @@ module.exports = (io, socket) => {
             let createdCards = await createCards(config);
             let cardsData = dealCardsForTeam(config, createdCards);
 
+            console.log("cards data >>>", cardsData);
+
             updatedCards = { ...cardsData };
             updatedGame = {
               ...updatedGame,
@@ -109,9 +110,6 @@ module.exports = (io, socket) => {
           await storeGameRequest(updatedGame);
           io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, game.id);
 
-          await new Promise((resolve) =>
-            setTimeout(resolve, updatedCurrentRound.instantSessionLength * 1000)
-          ); // wait for 30 seconds
           updatedCurrentRound = {
             ...updatedCurrentRound,
             readyTeams: [],
@@ -120,7 +118,6 @@ module.exports = (io, socket) => {
           updatedGame = {
             ...updatedGame,
             currentRound: updatedCurrentRound,
-            history: updatedHistory,
           };
           await storeGameRequest(updatedGame);
           io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, game.id);

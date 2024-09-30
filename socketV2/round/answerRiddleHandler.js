@@ -3,6 +3,7 @@ const eventNames = require("../eventNames");
 const { getGame, storeGameRequest } = require("../../api/gameApis");
 const roundStages = require("../helpers/roundStages");
 const errorHandler = require("../errorHandler");
+const { handleActionBeforeResult } = require("./winnerAttackHandlerHelper");
 
 /**
  *
@@ -20,14 +21,15 @@ module.exports = (io, socket) => {
 
         let game = await getGame(gameId);
         const { currentRound, teams } = game;
+        let updatedCurrentRound = { ...currentRound };
 
-        if (!currentRound.answeredTeams.includes(teamId)) {
-          let updatedCurrentRound = {
-            ...currentRound,
-            answeredTeams: [...currentRound.answeredTeams, teamId],
+        if (!updatedCurrentRound.answeredTeams.includes(teamId)) {
+          updatedCurrentRound = {
+            ...updatedCurrentRound,
+            answeredTeams: [...updatedCurrentRound.answeredTeams, teamId],
           };
 
-          let expectedAnswer = currentRound.riddle.answer;
+          let expectedAnswer = updatedCurrentRound.riddle.answer;
           if (expectedAnswer === answer && !updatedCurrentRound.hasWinner) {
             console.log("You have answered correctly");
 
@@ -43,19 +45,27 @@ module.exports = (io, socket) => {
             ...game,
             currentRound: updatedCurrentRound,
           });
-        } else if (
-          currentRound.answeredTeams.length === Object.keys(teams).length
+        }
+
+        if (
+          updatedCurrentRound.answeredTeams.length ===
+            Object.keys(teams).length &&
+          !updatedCurrentRound.hasWinner
         ) {
+          console.log("No one answered correctly, move on");
           updatedCurrentRound = {
             ...updatedCurrentRound,
             hasWinner: false,
-            winnerTeamId: teamId,
+            winnerTeamId: "",
             stage: roundStages.WINNER_DECISION,
           };
           await storeGameRequest({
             ...game,
             currentRound: updatedCurrentRound,
           });
+          io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, gameId);
+
+          await handleActionBeforeResult(io, socket, gameId);
         }
 
         io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, gameId);
