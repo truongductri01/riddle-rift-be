@@ -1,0 +1,180 @@
+listening on *:8080
+a user connected VBWHb_T72n1j-fWDAAAB
+a user connected pJonPJJeE_mLoYamAAAD
+no game id to fetch for
+a user disconnect >>> pJonPJJeE_mLoYamAAAD
+a user connected fe36qyLtVlgDAUXNAAAF
+no game id to fetch for
+a user disconnect >>> VBWHb_T72n1j-fWDAAAB
+a user connected uYwPguiQEaLmYWJlAAAH
+riddle >>> {
+  preQuestion: 'Remember the follow sequence in 5 seconds (from left to right). Then choose the correct answer',
+  question: '3, 7, 1, 1, 7, 18',
+  type: 'NUMBER_MEMORY_RIDDLE',
+  questionWillDisappear: true,
+  questionAppearTimeLimit: 5,
+  answerTimeLimit: 30,
+  answer: {
+    type: 'MULTIPLE_CHOICE',
+    correctAnswer: '3, 7, 1, 1, 7, 18',
+    options: [
+      '7, 1, 7, 3, 1, 18',
+      '1, 7, 1, 3, 7, 18',
+      '18, 1, 3, 7, 1, 7',
+      '3, 7, 1, 1, 7, 18'
+    ]
+  }
+}
+received answer from >>> 1728098080857 3, 7, 1, 1, 7, 18
+You have answered correctly
+trying to attack
+calling internal event handler
+calling internal event handler
+calling internal event handler
+calling internal event handler
+trying
+trying
+trying
+trying
+calling handle action
+calling handle action
+calling to run the stage
+result >>> {
+  teams: {
+    '1728098080857': {
+      id: '1728098080857',
+      players: [Array],
+      name: 'Team 1',
+      leader: '134iEe_1NlXM-qvHAAAD',
+      healthPoint: 2
+    },
+    '1728098080711': {
+      leader: 'L0WpR9SNlWbn-ZtlAAAB',
+      healthPoint: 3,
+      name: 'Team 2',
+      id: '1728098080711',
+      players: [Array]
+    }
+  },
+  activeActions: [
+    {
+      actionName: 'WinnerAttackAction',
+      actionDetail: [Object],
+      activator: '1728098080857',
+      cards: [],
+      targets: [Array]
+    }
+  ],
+  uselessActions: [],
+  counteredActions: [],
+  cards: {
+    teamCardInfo: { '1728098080857': [Object], '1728098080711': [Object] },
+    remainingCards: []
+  }
+}
+calling to run the stage
+result >>> {
+  teams: {
+    '1728098080857': {
+      id: '1728098080857',
+      players: [Array],
+      name: 'Team 1',
+      leader: '134iEe_1NlXM-qvHAAAD',
+      healthPoint: 2
+    },
+    '1728098080711': {
+      leader: 'L0WpR9SNlWbn-ZtlAAAB',
+      healthPoint: 3,
+      name: 'Team 2',
+      id: '1728098080711',
+      players: [Array]
+    }
+  },
+  activeActions: [
+    {
+      actionName: 'WinnerAttackAction',
+      actionDetail: [Object],
+      activator: '1728098080857',
+      cards: [],
+      targets: [Array]
+    }
+  ],
+  uselessActions: [],
+  counteredActions: [],
+  cards: {
+    teamCardInfo: { '1728098080857': [Object], '1728098080711': [Object] },
+    remainingCards: []
+  }
+}
+calling handle action
+calling handle action
+calling to run the stage
+result >>> {
+  teams: {
+    '1728098080857': {
+      id: '1728098080857',
+      players: [Array],
+      name: 'Team 1',
+      leader: '134iEe_1NlXM-qvHAAAD',
+      healthPoint: 2
+    },
+    '1728098080711': {
+      leader: 'L0WpR9SNlWbn-ZtlAAAB',
+      healthPoint: 0,
+      name: 'Team 2',
+      id: '1728098080711',
+      players: [Array]
+    }
+  },
+  activeActions: [
+    {
+      actionName: 'WinnerAttackAction',
+      actionDetail: [Object],
+      activator: '1728098080857',
+      cards: [],
+      targets: [Array]
+    }
+  ],
+  uselessActions: [],
+  counteredActions: [],
+  cards: {
+    teamCardInfo: { '1728098080857': [Object], '1728098080711': [Object] },
+    remainingCards: []
+  }
+}
+calling to run the stage
+result >>> {
+  teams: {
+    '1728098080857': {
+      id: '1728098080857',
+      players: [Array],
+      name: 'Team 1',
+      leader: '134iEe_1NlXM-qvHAAAD',
+      healthPoint: 2
+    },
+    '1728098080711': {
+      leader: 'L0WpR9SNlWbn-ZtlAAAB',
+      healthPoint: 0,
+      name: 'Team 2',
+      id: '1728098080711',
+      players: [Array]
+    }
+  },
+  activeActions: [
+    {
+      actionName: 'WinnerAttackAction',
+      actionDetail: [Object],
+      activator: '1728098080857',
+      cards: [],
+      targets: [Array]
+    }
+  ],
+  uselessActions: [],
+  counteredActions: [],
+  cards: {
+    teamCardInfo: { '1728098080857': [Object], '1728098080711': [Object] },
+    remainingCards: []
+  }
+}
+a user connected 86LrHFh2jNBgA3-AAAAJ
+a user disconnect >>> 86LrHFh2jNBgA3-AAAAJ
