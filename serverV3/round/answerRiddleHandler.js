@@ -3,14 +3,15 @@ const eventNames = require("../eventNames");
 const { getGame, storeGameRequest } = require("../../api/gameApis");
 const roundStages = require("../helpers/roundStages");
 const errorHandler = require("../errorHandler");
-const { handleActionBeforeResult } = require("./winnerAttackHandlerHelper");
+const EventEmitter = require("events");
 
 /**
  *
  * @param {Server} io
  * @param {Socket} socket
+ * @param {EventEmitter} eventEmitter
  */
-module.exports = (io, socket) => {
+module.exports = (io, socket, eventEmitter) => {
   socket.on(
     eventNames.on.answerRiddle,
     async ({ teamId, answer }, gameId = "game1") => {
@@ -29,8 +30,11 @@ module.exports = (io, socket) => {
             answeredTeams: [...updatedCurrentRound.answeredTeams, teamId],
           };
 
-          let expectedAnswer = updatedCurrentRound.riddle.answer;
-          if (expectedAnswer === answer && !updatedCurrentRound.hasWinner) {
+          let expectedAnswer = updatedCurrentRound.riddle.answer.correctAnswer;
+          if (
+            `${expectedAnswer}` === `${answer}` &&
+            !updatedCurrentRound.hasWinner
+          ) {
             console.log("You have answered correctly");
 
             updatedCurrentRound = {
@@ -63,9 +67,8 @@ module.exports = (io, socket) => {
             ...game,
             currentRound: updatedCurrentRound,
           });
-          io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, gameId);
 
-          await handleActionBeforeResult(io, socket, gameId);
+          eventEmitter.emit(eventNames.internal.calculateResult, gameId);
         }
 
         io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, gameId);

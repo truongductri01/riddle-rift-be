@@ -5,6 +5,9 @@ const BaseRiddle = require("./BaseRiddle");
 
 class NumberMemoryRiddle extends BaseRiddle {
   constructor(answerType) {
+    if (answerType !== riddleAnswerTypes.MULTIPLE_CHOICE) {
+      throw new Error("Number memory should only be multiple choice");
+    }
     super(answerType);
   }
 
@@ -18,15 +21,15 @@ class NumberMemoryRiddle extends BaseRiddle {
     }
 
     // 2. correct answer is the arrayOfRandomNumber
-    let memoryTime = 15; // seconds
+    let memoryTime = 5; // seconds
 
     // 3. Generate answer and return
     return {
-      preQuestion: `Remember the follow sequence in ${memoryTime} seconds`,
+      preQuestion: `Remember the follow sequence in ${memoryTime} seconds (from left to right). Then choose the correct answer`,
       question: arrayOfRandomNumber.join(", "),
       type: riddleQuestionTypes.NUMBER_MEMORY_RIDDLE,
       questionWillDisappear: true,
-      questionAppearTimeLimit: 15,
+      questionAppearTimeLimit: memoryTime,
       answerTimeLimit: 30,
       answer: this.generateAnswer(this.answerType, arrayOfRandomNumber),
     };
@@ -49,9 +52,15 @@ class NumberMemoryRiddle extends BaseRiddle {
       let randomAnswers = [correctAnswer.join(", ")];
 
       for (let i = 0; i < 3; i++) {
-        let newAnswer = shuffleKLast([...correctAnswer], 4).join(", ");
+        let newAnswer = shuffleKLast(
+          [...correctAnswer],
+          correctAnswer.length
+        ).join(", ");
         while (randomAnswers.includes(newAnswer)) {
-          newAnswer = shuffleKLast([...correctAnswer], 4).join(", ");
+          newAnswer = shuffleKLast(
+            [...correctAnswer],
+            correctAnswer.length
+          ).join(", ");
         }
         randomAnswers.push(newAnswer);
       }

@@ -10,37 +10,40 @@ const answerRiddleHandler = require("./round/answerRiddleHandler");
 const winnerAttackHandler = require("./round/winnerAttackHandler");
 const beforeDisconnectHandler = require("./beforeDisconnectHandler");
 const disconnectHandler = require("./disconnectHandler");
+const internalCalculateResultHandler = require("./round/internalCalculateResultHandler");
 
 /**
  *
  * @param {Server} io
  * @param {Socket} socket
  */
-module.exports = (io, socket) => {
+module.exports = (io, socket, eventEmitter) => {
   // create game
-  createGameHandler(io, socket);
+  createGameHandler(io, socket, eventEmitter);
   // get the game status
-  getGameStatusHandler(io, socket);
+  getGameStatusHandler(io, socket, eventEmitter);
   // confirm player and store player id
-  confirmPlayerIdHandler(io, socket);
+  confirmPlayerIdHandler(io, socket, eventEmitter);
   // player joined with name
-  playerJoinHandler(io, socket);
+  playerJoinHandler(io, socket, eventEmitter);
   // team select
-  teamSelectHandler(io, socket);
+  teamSelectHandler(io, socket, eventEmitter);
 
   // -- for round -- //
   // team ready
-  teamReadyHandler(io, socket);
+  teamReadyHandler(io, socket, eventEmitter);
   // select cards
-  selectCardsForRoundHandler(io, socket);
+  selectCardsForRoundHandler(io, socket, eventEmitter);
   // answer riddle
-  answerRiddleHandler(io, socket);
+  answerRiddleHandler(io, socket, eventEmitter);
   // winner attack
-  winnerAttackHandler(io, socket);
+  winnerAttackHandler(io, socket, eventEmitter);
+  // calculate result
+  internalCalculateResultHandler(io, socket, eventEmitter);
 
   // before-disconnect
-  beforeDisconnectHandler(io, socket);
+  beforeDisconnectHandler(io, socket, eventEmitter);
 
   //   disconnect
-  disconnectHandler(io, socket);
+  disconnectHandler(io, socket, eventEmitter);
 };

@@ -33,5 +33,9 @@ const eventNames = {
 
     error: "error",
   },
+
+  internal: {
+    calculateResult: "calculate_result",
+  },
 };
 module.exports = eventNames;

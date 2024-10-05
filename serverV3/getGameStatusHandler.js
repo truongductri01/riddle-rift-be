@@ -35,7 +35,10 @@ module.exports = (io, socket) => {
           playerId,
           currentRound: {
             ...currentRound,
-            riddle: { ...currentRound.riddle, answer: null },
+            riddle: {
+              ...currentRound.riddle,
+              answer: { ...currentRound.riddle?.answer, correctAnswer: null },
+            },
           },
           finalWinner,
           history,

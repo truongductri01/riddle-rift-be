@@ -17,6 +17,7 @@ const { getGame } = require("./api/gameApis");
 const mockGame1 = require("./socketV2/mockGames/mockGame1");
 const errorHandler = require("./socketV2/errorHandler");
 const httpRequestsV3 = require("./serverV3/httpRequestsV3");
+const EventEmitter = require("events");
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -79,18 +80,20 @@ app.get("/test-card", async (req, res) => {
   }
 });
 
+httpRequestsV3(app);
+
 io.on("connection", async (socket) => {
+  let eventEmitter = new EventEmitter();
   console.log("a user connected", socket.id);
   io.emit("testing", { data: "Welcome to RiddleRift" });
 
   try {
-    socketV2(io, socket);
+    // socketV2(io, socket);
+    socketV3(io, socket, eventEmitter);
   } catch (e) {
     errorHandler(io, socket, "Error", `${e}`);
   }
 });
-
-httpRequestsV3(app);
 
 server.listen(8080, () => {
   console.log("listening on *:8080");

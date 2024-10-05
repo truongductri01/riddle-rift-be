@@ -11,6 +11,7 @@ const handleActionBeforeResult = async (io, socket, gameId) => {
   updatedCurrentRound = {
     ...currentRound,
   };
+
   // TODO: process the result before sending
   let result = actionHandler(updatedCurrentRound, teams, cards);
   console.log("result >>>", result);
@@ -29,10 +30,10 @@ const handleActionBeforeResult = async (io, socket, gameId) => {
 
   await storeHistory(gameId);
   io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, game.id);
-  await checkFinalWinner(gameId, result);
+  await checkFinalWinner(io, socket, gameId, result);
 };
 
-const checkFinalWinner = async (gameId, result) => {
+const checkFinalWinner = async (io, socket, gameId, result) => {
   let game = await getGame(gameId);
   const { currentRound } = game;
   let updatedGame = { ...game };

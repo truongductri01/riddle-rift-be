@@ -2,16 +2,18 @@ const { Server, Socket } = require("socket.io");
 const eventNames = require("../eventNames");
 const { getGame, storeGameRequest } = require("../../api/gameApis");
 const roundStages = require("../helpers/roundStages");
-const { generateMathEquationRiddle } = require("../helpers/riddles");
 const cardGenerateFactory = require("../actionHandler/cardGenerateFactory");
 const errorHandler = require("../errorHandler");
-const { handleActionBeforeResult } = require("./winnerAttackHandlerHelper");
+const riddleFactoryGenerate = require("../riddleHandler/riddleFactoryGenerate");
+const riddleQuestionTypes = require("../types/riddleQuestionTypes");
+const EventEmitter = require("events");
 /**
  *
  * @param {Server} io
  * @param {Socket} socket
+ * @param {EventEmitter} eventEmitter
  */
-module.exports = (io, socket) => {
+module.exports = (io, socket, eventEmitter) => {
   socket.on(
     eventNames.on.selectCardsForRound,
     async ({ teamId, selectedCards }, gameId = "game1") => {
@@ -96,7 +98,9 @@ module.exports = (io, socket) => {
     // when all team are ready
     if (updatedCurrentRound.readyTeams.length === config.teams.length) {
       // generate riddle
-      let riddle = generateMathEquationRiddle();
+      let riddle = riddleFactoryGenerate(
+        riddleQuestionTypes.RANDOM
+      ).generateRiddle();
       console.log("riddle >>>", riddle);
 
       // change to riddle stage, and clean up the ready teams
@@ -129,7 +133,11 @@ module.exports = (io, socket) => {
       game = await getGame(gameId);
       let { currentRound } = game;
       updatedCurrentRound = { ...currentRound };
-      if (updatedCurrentRound.index === currentRoundIndex) {
+      if (
+        updatedCurrentRound.index === currentRoundIndex &&
+        updatedCurrentRound.stage === roundStages.RIDDLE
+      ) {
+        // process this and moveon
         if (updatedCurrentRound.stage === roundStages.RIDDLE) {
           updatedCurrentRound = {
             ...updatedCurrentRound,
@@ -144,13 +152,9 @@ module.exports = (io, socket) => {
 
         game = await getGame(gameId);
         let { currentRound } = game;
-        if (
-          !currentRound.hasWinner &&
-          currentRound.stage !== roundStages.RESULT &&
-          currentRound.stage !== roundStages.WINNER_DECISION
-        ) {
+        if (!currentRound.hasWinner) {
           console.log("handle action from selectes card for round");
-          await handleActionBeforeResult(io, socket, gameId);
+          eventEmitter.emit(eventNames.internal.calculateResult, gameId);
         }
       }
     }

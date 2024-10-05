@@ -5,6 +5,10 @@ const BaseRiddle = require("./BaseRiddle");
 
 class ColorMemoryRiddle extends BaseRiddle {
   constructor(answerType) {
+    if (answerType !== riddleAnswerTypes.MULTIPLE_CHOICE) {
+      throw new Error("Color memory should only be multiple choice");
+    }
+
     super(answerType);
 
     this.defaultColors = {
@@ -14,7 +18,7 @@ class ColorMemoryRiddle extends BaseRiddle {
       CYAN: "#00FFFF",
       GREEN: "#00FF00",
       PURPLE: "#800080",
-      YELLOW: "#FFFF00",
+      APRICOT: "#FBCEB1",
       BLUE: "#0000FF",
     };
   }
@@ -23,18 +27,18 @@ class ColorMemoryRiddle extends BaseRiddle {
     // 1 generate random colors order
     let allColors = Object.values(this.defaultColors);
 
-    let randomColors = shuffleArray(shuffleArray(allColors)).slice(-4);
+    let randomColors = shuffleArray(shuffleArray(allColors)).slice(-5);
 
     // 2. correct answer is the arrayOfRandomNumber
-    let memoryTime = 15; // seconds
+    let memoryTime = 7; // seconds
 
     // 3. Generate answer and return
     return {
-      preQuestion: `Remember the follow color sequence in ${memoryTime} seconds`,
+      preQuestion: `Remember the follow color sequence in ${memoryTime} seconds. Then choose the correct answer!`,
       question: randomColors.join(", "),
       type: riddleQuestionTypes.COLOR_MEMORY_RIDDLE,
       questionWillDisappear: true,
-      questionAppearTimeLimit: 15,
+      questionAppearTimeLimit: memoryTime,
       answerTimeLimit: 30,
       answer: this.generateAnswer(this.answerType, randomColors),
     };
@@ -57,9 +61,15 @@ class ColorMemoryRiddle extends BaseRiddle {
       let randomAnswers = [correctAnswer.join(", ")];
 
       for (let i = 0; i < 3; i++) {
-        let newAnswer = shuffleKLast([...correctAnswer], 3).join(", ");
+        let newAnswer = shuffleKLast(
+          [...correctAnswer],
+          correctAnswer.length
+        ).join(", ");
         while (randomAnswers.includes(newAnswer)) {
-          newAnswer = shuffleKLast([...correctAnswer], 3).join(", ");
+          newAnswer = shuffleKLast(
+            [...correctAnswer],
+            correctAnswer.length
+          ).join(", ");
         }
         randomAnswers.push(newAnswer);
       }

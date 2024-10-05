@@ -23,7 +23,11 @@ const generateRiddle = (type, answerType) => {
       let answerTypes = Object.values(riddleAnswerTypes);
 
       let randomType = shuffleArray(shuffleArray(questionTypes))[0];
-      let randomAnswerType = shuffleArray(answerTypes)[0];
+      let randomAnswerType =
+        randomType === riddleQuestionTypes.COLOR_MEMORY_RIDDLE ||
+        randomType === riddleQuestionTypes.NUMBER_MEMORY_RIDDLE
+          ? riddleAnswerTypes.MULTIPLE_CHOICE
+          : shuffleArray(answerTypes)[0];
 
       return generateRiddle(randomType, randomAnswerType);
     default:

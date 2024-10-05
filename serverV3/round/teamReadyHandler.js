@@ -123,6 +123,7 @@ module.exports = (io, socket) => {
           io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, game.id);
         }
       } catch (e) {
+        console.log("team-ready-error >>>", e);
         errorHandler(io, socket, "team-ready-error", `${e}`);
       }
     }
