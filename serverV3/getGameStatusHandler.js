@@ -27,39 +27,58 @@ module.exports = (io, socket) => {
         );
         return;
       } else {
+        let returnedGame = {};
         let playerInfo = players[playerId];
-        let returnedGame = {
-          config,
-          teams,
-          playerInfo,
-          playerId,
-          currentRound: {
-            ...currentRound,
-            riddle: {
-              ...currentRound.riddle,
-              answer: { ...currentRound.riddle?.answer, correctAnswer: null },
-            },
-          },
-          finalWinner,
-          history,
-          id: game.id,
-        };
-        if (playerInfo) {
-          let teamId = playerInfo.teamId;
-          if (teamId && cards.teamCardInfo) {
-            returnedGame = {
-              ...returnedGame,
-              cards: {
-                cards: cards.teamCardInfo[teamId],
-                remainingCardsCount: cards.remainingCards
-                  ? cards.remainingCards.length
-                  : 0,
+        if (playerInfo?.isAdmin) {
+          returnedGame = {
+            config,
+            teams,
+            cards,
+            currentRound,
+            finalWinner,
+            history,
+            playerInfo,
+            id: game.id,
+            playerId,
+          };
+        } else {
+          returnedGame = {
+            config,
+            teams,
+            playerInfo,
+            playerId,
+            currentRound: {
+              ...currentRound,
+              riddle: {
+                ...currentRound.riddle,
+                answer: {
+                  ...currentRound.riddle?.answer,
+                  correctAnswer: playerInfo?.isAdmin
+                    ? currentRound.riddle?.answer?.correctAnswer
+                    : null,
+                },
               },
-            };
+            },
+            finalWinner,
+            history,
+            id: game.id,
+          };
+          if (playerInfo) {
+            let teamId = playerInfo.teamId;
+            if (teamId && cards.teamCardInfo) {
+              returnedGame = {
+                ...returnedGame,
+                cards: {
+                  cards: cards.teamCardInfo[teamId],
+                  remainingCardsCount: cards.remainingCards
+                    ? cards.remainingCards.length
+                    : 0,
+                },
+              };
+            }
+            // join here
+            socket.join(`${game.id}/${teamId}`);
           }
-
-          // join here
-          socket.join(`${game.id}/${teamId}`);
         }
 
         socket.join(`${game.id}`);

@@ -28,6 +28,10 @@ module.exports = (io, socket, eventEmitter) => {
           updatedCurrentRound = {
             ...updatedCurrentRound,
             answeredTeams: [...updatedCurrentRound.answeredTeams, teamId],
+            teamAnswers: {
+              ...updatedCurrentRound.teamAnswers,
+              [teamId]: answer,
+            },
           };
 
           let expectedAnswer = updatedCurrentRound.riddle.answer.correctAnswer;

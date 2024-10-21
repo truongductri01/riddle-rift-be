@@ -70,6 +70,7 @@ module.exports = (io, socket) => {
             roundResult: {},
             result: null,
             answeredTeams: [],
+            teamAnswers: {},
             riddle: {},
           };
 

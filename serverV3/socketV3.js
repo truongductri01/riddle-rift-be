@@ -11,6 +11,7 @@ const winnerAttackHandler = require("./round/winnerAttackHandler");
 const beforeDisconnectHandler = require("./beforeDisconnectHandler");
 const disconnectHandler = require("./disconnectHandler");
 const internalCalculateResultHandler = require("./round/internalCalculateResultHandler");
+const joinAsAdminHandler = require("./joinAsAdminHandler");
 
 /**
  *
@@ -28,6 +29,8 @@ module.exports = (io, socket, eventEmitter) => {
   playerJoinHandler(io, socket, eventEmitter);
   // team select
   teamSelectHandler(io, socket, eventEmitter);
+  // join as admin
+  joinAsAdminHandler(io, socket, eventEmitter);
 
   // -- for round -- //
   // team ready

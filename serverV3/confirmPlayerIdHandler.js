@@ -6,6 +6,7 @@ module.exports = (io, socket) => {
   socket.on(
     eventNames.on.confirmPlayerRequest,
     async (playerId, gameId = "game1") => {
+      console.log("confirming player", playerId, "for game", gameId);
       try {
         let game = await getGame(gameId);
         const { socketToPlayers, players, teams } = game;

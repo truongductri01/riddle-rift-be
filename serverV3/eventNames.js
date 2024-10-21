@@ -8,6 +8,7 @@ const eventNames = {
     getGameStatusEvent: "get-game-status",
     playerJoinRequest: "player-join-request",
     teamSelectRequest: "team-select-request",
+    joinAsAdmin: "join-as-admin",
 
     // round
     teamReadyRequest: "team-ready-request",
@@ -26,6 +27,7 @@ const eventNames = {
     gameStatus: "game-status",
     playerJoinResponse: "player-join-response",
     teamSelectResponse: "team-select-response",
+    joinAsAdminResponse: "join-as-admin-response",
 
     playerJoinTeam: "player-join-team",
     teamReadyResponse: "team-ready-response",

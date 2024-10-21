@@ -56,4 +56,27 @@ const storeGameRequest = async (game, gameId = null) => {
   }
 };
 
-module.exports = { getGame, storeGameRequest };
+const storeCompletedGameRequest = async (game, gameId = null) => {
+  try {
+    let gameDoc = doc(db, "completedGames", "game1");
+    if (gameId) {
+      gameDoc = doc(db, "completedGames", gameId);
+    } else if (game.id) {
+      gameDoc = doc(db, "completedGames", game.id);
+    } else {
+      gameDoc = doc(collection(db, "completedGames"));
+    }
+
+    await setDoc(gameDoc, {
+      ...game,
+      id: gameDoc.id,
+      state: gameStates.RUNNING,
+    });
+
+    return gameDoc.id;
+  } catch (e) {
+    console.log("Error with store game request >>>", e);
+  }
+};
+
+module.exports = { getGame, storeGameRequest, storeCompletedGameRequest };

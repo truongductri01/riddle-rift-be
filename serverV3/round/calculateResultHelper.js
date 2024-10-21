@@ -1,5 +1,9 @@
 const eventNames = require("../eventNames");
-const { getGame, storeGameRequest } = require("../../api/gameApis");
+const {
+  getGame,
+  storeGameRequest,
+  storeCompletedGameRequest,
+} = require("../../api/gameApis");
 const roundStages = require("../helpers/roundStages");
 const actionHandler = require("../actionHandler/actionHandler");
 
@@ -30,16 +34,31 @@ const handleActionBeforeResult = async (io, socket, gameId) => {
 
   await storeHistory(gameId);
   io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, game.id);
-  await checkFinalWinner(io, socket, gameId, result);
+  await checkFinalWinnerByRound(io, socket, gameId, result);
+  // await checkFinalWinner(io, socket, gameId, result);
+};
+
+const checkFinalWinnerByRound = async (io, socket, gameId, result) => {
+  let game = await getGame(gameId);
+  const { currentRound, config } = game;
+  let updatedGame = { ...game };
+
+  if (currentRound.index === config.maxRound) {
+    let highestPointTeam = Object.keys(result.teams)?.sort(
+      // team with more health point shows up first
+      (a, b) => result.teams?.[b]?.healthPoint - result.teams?.[a]?.healthPoint
+    )[0];
+    updatedGame = { ...updatedGame, finalWinner: highestPointTeam };
+
+    await storeCompletedGameRequest(updatedGame);
+    await storeGameRequest(updatedGame);
+    io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, game.id);
+  }
 };
 
 const checkFinalWinner = async (io, socket, gameId, result) => {
   let game = await getGame(gameId);
-  const { currentRound } = game;
   let updatedGame = { ...game };
-  updatedCurrentRound = {
-    ...currentRound,
-  };
 
   // if there is one single team left with health point more than 0
   let teamsMoreThanOneHealthCount = 0;
