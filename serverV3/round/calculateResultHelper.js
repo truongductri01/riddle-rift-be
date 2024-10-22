@@ -34,8 +34,12 @@ const handleActionBeforeResult = async (io, socket, gameId) => {
 
   await storeHistory(gameId);
   io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, game.id);
-  await checkFinalWinnerByRound(io, socket, gameId, result);
-  // await checkFinalWinner(io, socket, gameId, result);
+
+  if (game?.gameEndsWithRounds) {
+    await checkFinalWinnerByRound(io, socket, gameId, result);
+  } else {
+    await checkFinalWinner(io, socket, gameId, result);
+  }
 };
 
 const checkFinalWinnerByRound = async (io, socket, gameId, result) => {
