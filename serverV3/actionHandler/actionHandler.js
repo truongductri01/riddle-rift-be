@@ -80,7 +80,7 @@ function handleResultStageActions(currentRound, teams, cards) {
       [attackedTeamId]
     );
 
-    for (let cardInfo of cardsToUsed[winnerTeamId]) {
+    for (let cardInfo of cardsToUsed?.[winnerTeamId] ?? []) {
       if (cardInfo.type === cardTypes.ATTACK) {
         let attackCard = cardGenerateFactory(
           cardTypes.ATTACK,
@@ -134,7 +134,7 @@ function handleResultStageActions(currentRound, teams, cards) {
       action.cardDetail.targetType === targetTypes.MULTIPLE
     ) {
       for (let targetId of action.targets) {
-        for (let cardInfo of cardsToUsed[targetId]) {
+        for (let cardInfo of cardsToUsed?.[targetId] ?? []) {
           if (cardInfo.type === action.actionDetail?.counteredBy) {
             isCountered = true;
             let card = cardGenerateFactory(
