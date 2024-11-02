@@ -35,7 +35,7 @@ const handleActionBeforeResult = async (io, socket, gameId) => {
   await storeHistory(gameId);
   io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, game.id);
 
-  if (game?.gameEndsWithRounds) {
+  if (game?.config.gameEndsWithRounds) {
     await checkFinalWinnerByRound(io, socket, gameId, result);
   } else {
     await checkFinalWinner(io, socket, gameId, result);
@@ -43,11 +43,18 @@ const handleActionBeforeResult = async (io, socket, gameId) => {
 };
 
 const checkFinalWinnerByRound = async (io, socket, gameId, result) => {
+  console.log("attempting to check final winner by round");
   let game = await getGame(gameId);
   const { currentRound, config } = game;
+  console.log(
+    "current round index ",
+    currentRound.index,
+    "and config max round",
+    config.maxRound
+  );
   let updatedGame = { ...game };
 
-  if (currentRound.index === config.maxRound) {
+  if (currentRound.index >= config.maxRound) {
     let highestPointTeam = Object.keys(result.teams)?.sort(
       // team with more health point shows up first
       (a, b) => result.teams?.[b]?.healthPoint - result.teams?.[a]?.healthPoint
@@ -61,6 +68,7 @@ const checkFinalWinnerByRound = async (io, socket, gameId, result) => {
 };
 
 const checkFinalWinner = async (io, socket, gameId, result) => {
+  console.log("Attempting to check winner by health point");
   let game = await getGame(gameId);
   let updatedGame = { ...game };
 

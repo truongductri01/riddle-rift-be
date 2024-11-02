@@ -18,9 +18,11 @@ module.exports = (io, socket, eventEmitter) => {
     eventNames.on.selectCardsForRound,
     async ({ teamId, selectedCards }, gameId = "game1") => {
       try {
+        console.log("received team ID >>>", teamId);
         await handleCardsSelect(gameId, teamId, selectedCards);
         await handleAllTeamsReadyAndStartRound(gameId);
       } catch (e) {
+        console.log("Error with select cards:", e);
         errorHandler(io, socket, "select-cards-error", `${e}`);
       }
     }
@@ -101,6 +103,12 @@ module.exports = (io, socket, eventEmitter) => {
       let riddle = riddleFactoryGenerate(
         riddleQuestionTypes.RANDOM
       ).generateRiddle();
+
+      if (!config.isRandomQuestionRound) {
+        riddle = riddleFactoryGenerate(
+          riddleQuestionTypes.ADMIN
+        ).generateRiddle();
+      }
       console.log("riddle >>>", riddle);
 
       // change to riddle stage, and clean up the ready teams
@@ -122,6 +130,7 @@ module.exports = (io, socket, eventEmitter) => {
 
       io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, game.id);
 
+      console.log("waiting");
       // let the riddle happens only within 30 seconds, how?
       await new Promise((resolve) =>
         setTimeout(resolve, updatedCurrentRound.riddleSessionLength * 1000)
@@ -135,7 +144,8 @@ module.exports = (io, socket, eventEmitter) => {
       updatedCurrentRound = { ...currentRound };
       if (
         updatedCurrentRound.index === currentRoundIndex &&
-        updatedCurrentRound.stage === roundStages.RIDDLE
+        updatedCurrentRound.stage === roundStages.RIDDLE &&
+        updatedCurrentRound?.riddle?.type !== riddleQuestionTypes.ADMIN
       ) {
         // process this and moveon
         if (updatedCurrentRound.stage === roundStages.RIDDLE) {

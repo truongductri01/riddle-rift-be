@@ -1,6 +1,7 @@
 const { shuffleArray } = require("../helpers/arrayHelpers");
 const riddleAnswerTypes = require("../types/riddleAnswerTypes");
 const riddleQuestionTypes = require("../types/riddleQuestionTypes");
+const AdminRiddle = require("./AdminRiddle");
 const ColorMemoryRiddle = require("./ColorMemoryRiddle");
 const NormalMathRiddle = require("./NormalMathRiddle");
 const NumberMemoryRiddle = require("./NumberMemoryRiddle");
@@ -16,6 +17,8 @@ const generateRiddle = (type, answerType) => {
       return new NumberMemoryRiddle(answerType);
     case riddleQuestionTypes.COLOR_MEMORY_RIDDLE:
       return new ColorMemoryRiddle(answerType);
+    case riddleQuestionTypes.ADMIN:
+      return new AdminRiddle(answerType);
     case riddleQuestionTypes.RANDOM:
       let questionTypes = Object.values(riddleQuestionTypes).filter(
         (v) => v != riddleQuestionTypes.RANDOM
@@ -36,14 +39,19 @@ const generateRiddle = (type, answerType) => {
 };
 
 module.exports = (type, answerType) => {
-  if (type === riddleQuestionTypes.RANDOM) {
-    return generateRiddle(riddleQuestionTypes.RANDOM);
+  if (
+    type === riddleQuestionTypes.RANDOM ||
+    type === riddleQuestionTypes.ADMIN
+  ) {
+    return generateRiddle(type);
   }
 
   if (!type) {
     throw new Error("Question type must be specified");
   } else if (!answerType) {
-    throw new Error("For question type not random, answer Type is require");
+    throw new Error(
+      "For question type not random or admin, answer Type is require"
+    );
   } else if (!riddleQuestionTypes[type]) {
     throw new Error(
       `Invalid answer type: ${type}. Should be one of the following choice: [${Object.keys(

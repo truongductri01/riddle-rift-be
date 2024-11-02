@@ -15,6 +15,7 @@ const eventNames = {
     selectCardsForRound: "select-cards-for-round",
     answerRiddle: "answer-riddle",
     winnerAttack: "winner-attack",
+    adminActionOnRiddle: "admin-action-on-riddle",
 
     // restart
     startNewGame: "start-new-game",

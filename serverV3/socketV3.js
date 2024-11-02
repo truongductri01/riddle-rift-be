@@ -12,6 +12,7 @@ const beforeDisconnectHandler = require("./beforeDisconnectHandler");
 const disconnectHandler = require("./disconnectHandler");
 const internalCalculateResultHandler = require("./round/internalCalculateResultHandler");
 const joinAsAdminHandler = require("./joinAsAdminHandler");
+const adminActionOnRiddleHandler = require("./round/adminActionOnRiddleHandler");
 
 /**
  *
@@ -39,6 +40,8 @@ module.exports = (io, socket, eventEmitter) => {
   selectCardsForRoundHandler(io, socket, eventEmitter);
   // answer riddle
   answerRiddleHandler(io, socket, eventEmitter);
+  // admin action
+  adminActionOnRiddleHandler(io, socket, eventEmitter);
   // winner attack
   winnerAttackHandler(io, socket, eventEmitter);
   // calculate result
