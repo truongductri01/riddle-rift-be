@@ -18,6 +18,7 @@ class ShuffleCard extends BaseCard {
       counteredBy: null,
       description: `Shuffle all teams' cards with all the remaining cards that are not dealt. Then re-distribute to each team same amount of card before the shuffle.`,
       targetType: targetTypes.ALL,
+      cantExistWith: null,
     };
   }
 }

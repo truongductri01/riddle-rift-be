@@ -18,6 +18,7 @@ class StealOneCard extends BaseCard {
       counteredBy: null,
       description: `Choose another team to steal one card randomly`,
       targetType: targetTypes.SINGLE_TARGET,
+      cantExistWith: null,
     };
   }
 }

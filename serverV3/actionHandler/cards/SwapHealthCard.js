@@ -18,6 +18,7 @@ class SwapHealthCard extends BaseCard {
       counteredBy: cardTypes.BLOCK_SWAP_HEALTH,
       description: `Choose another team and swap your team's health with theirs`,
       targetType: targetTypes.SINGLE_TARGET,
+      cantExistWith: cardTypes.BLOCK_SWAP_HEALTH,
     };
   }
 }

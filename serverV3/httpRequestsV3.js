@@ -1,8 +1,9 @@
 const { Express } = require("express");
 const riddleFactoryGenerate = require("./riddleHandler/riddleFactoryGenerate");
-const { scenario1, yourTeam } = require("./mockGames/scenarios");
+const { scenario1, yourTeam, config1 } = require("./mockGames/scenarios");
 const actionHandler = require("./actionHandler/actionHandler");
 const riddleQuestionTypes = require("./types/riddleQuestionTypes");
+const { createCards, dealCardsForTeam } = require("./helpers/createCards2");
 
 /**
  *
@@ -67,5 +68,12 @@ module.exports = (app) => {
       scenario,
       yourId: yourTeam,
     });
+  });
+
+  app.get("/try-deal-card", async (req, res) => {
+    let createdCards = await createCards(config1);
+    let cardsData = dealCardsForTeam(config1, createdCards);
+
+    return res.json(cardsData);
   });
 };

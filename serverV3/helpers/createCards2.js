@@ -32,6 +32,7 @@ const createCards = async (config) => {
  * @param {Array<BaseCard>} cards
  */
 const dealCardsForTeam = (config, cards) => {
+  console.log("trying to deal >>>");
   // get a list of teams id
   let teams = config.teams;
   let teamIdList = teams.map((t) => t.id);
@@ -48,9 +49,41 @@ const dealCardsForTeam = (config, cards) => {
   // assign the cards to each team
   let index = 0;
   for (let teamId of teamIdList) {
+    console.log("index >>>", index);
     let activeCards = [];
     for (let i = 0; i < config.maxCard; i++) {
       let card = remainingCards[index];
+      // if the card cannot both-exist, swap with a different one
+      let cannotExistWithType = card.getCardDetails().cantExistWith;
+      console.log("cannot deal with >>>", cannotExistWithType);
+      if (
+        cannotExistWithType &&
+        activeCards.some((x) => x.getCardDetails().type === cannotExistWithType)
+      ) {
+        for (
+          let tempIdx = index + 1;
+          tempIdx < remainingCards.length;
+          tempIdx++
+        ) {
+          let tempCard = remainingCards[tempIdx];
+          let tempCardCannotExistWithType =
+            tempCard.getCardDetails().cantExistWith;
+
+          if (
+            !activeCards.some(
+              (x) => x.getCardDetails().type === tempCardCannotExistWithType
+            )
+          ) {
+            // swap
+            remainingCards[tempIdx] = card;
+            remainingCards[index] = tempCard;
+
+            card = tempCard;
+            break;
+          }
+        }
+      }
+
       card.setActivator(teamId);
       activeCards.push(card);
       index++;

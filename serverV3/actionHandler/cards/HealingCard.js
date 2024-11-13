@@ -18,6 +18,7 @@ class HealingCard extends BaseCard {
       counteredBy: null,
       description: `Increase your team's health point by 1`,
       targetType: targetTypes.SELF,
+      cantExistWith: null,
     };
   }
 }

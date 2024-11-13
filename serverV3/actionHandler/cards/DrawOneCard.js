@@ -18,6 +18,7 @@ class DrawOneCard extends BaseCard {
       counteredBy: null,
       description: `Draw one card from the deck`,
       targetType: targetTypes.SELF,
+      cantExistWith: null,
     };
   }
 }

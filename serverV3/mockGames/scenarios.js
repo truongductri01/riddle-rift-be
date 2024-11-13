@@ -75,4 +75,22 @@ const scenario1 = {
   },
 };
 
-module.exports = { scenario1, yourTeam };
+const config1 = {
+  cardsAmountConfig: {
+    ATTACK: 3,
+    BLOCK_SWAP_HEALTH: 1,
+    DEFENSE: 3,
+    HEALING: 3,
+    SWAP_HEALTH: 1,
+  },
+  maxCard: 5,
+  teams: [
+    {
+      id: "team1",
+      name: "Team 1",
+    },
+    { id: "team2", name: "Team 2" },
+  ],
+};
+
+module.exports = { scenario1, yourTeam, config1 };

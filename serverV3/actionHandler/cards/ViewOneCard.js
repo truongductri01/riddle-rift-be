@@ -18,6 +18,7 @@ class ViewOneCard extends BaseCard {
       counteredBy: null,
       description: `Choose another team to see one random card of them`,
       targetType: targetTypes.SINGLE_TARGET,
+      cantExistWith: null,
     };
   }
 }

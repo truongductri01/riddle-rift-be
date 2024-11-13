@@ -18,6 +18,7 @@ class AttackCard extends BaseCard {
       counteredBy: cardTypes.DEFENSE,
       description: `Increase your next attack damage (only if you are the winner) by 1. Will be countered by '${cardTypes.DEFENSE}' card`,
       targetType: targetTypes.COMBINE_WITH_WINNER_ATTACH,
+      cantExistWith: null,
     };
   }
 }

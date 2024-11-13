@@ -57,6 +57,7 @@ class BaseCard {
       "counteredBy",
       "description",
       "targetType",
+      "cantExistWith",
     ];
 
     for (let key of expectedKeys) {

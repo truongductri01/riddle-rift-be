@@ -20,6 +20,7 @@ class BlockSwapHealthCard extends BaseCard {
       counteredBy: null,
       description: `Block Swap Health Card from other team`,
       targetType: targetTypes.SELF,
+      cantExistWith: cardTypes.SWAP_HEALTH,
     };
   }
 }

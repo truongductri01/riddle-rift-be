@@ -18,6 +18,7 @@ class DefenseCard extends BaseCard {
       counteredBy: null,
       description: `Block one attack against your team`,
       targetType: targetTypes.SELF,
+      cantExistWith: null,
     };
   }
 }
