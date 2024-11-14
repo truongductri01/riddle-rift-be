@@ -21,7 +21,7 @@ const generateRiddle = (type, answerType) => {
       return new AdminRiddle(answerType);
     case riddleQuestionTypes.RANDOM:
       let questionTypes = Object.values(riddleQuestionTypes).filter(
-        (v) => v != riddleQuestionTypes.RANDOM
+        (v) => v != riddleQuestionTypes.RANDOM && v != riddleQuestionTypes.ADMIN
       );
       let answerTypes = Object.values(riddleAnswerTypes);
 
