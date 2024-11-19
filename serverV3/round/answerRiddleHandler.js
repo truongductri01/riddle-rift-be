@@ -47,6 +47,12 @@ module.exports = (io, socket, eventEmitter) => {
               winnerTeamId: teamId,
               stage: roundStages.WINNER_DECISION,
             };
+            await storeGameRequest({
+              ...game,
+              currentRound: updatedCurrentRound,
+            });
+
+            io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, gameId);
           }
 
           await storeGameRequest({
@@ -75,7 +81,7 @@ module.exports = (io, socket, eventEmitter) => {
           eventEmitter.emit(eventNames.internal.calculateResult, gameId);
         }
 
-        io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, gameId);
+        io.to(socket.id).emit(eventNames.emit.gameStatusChange, gameId);
       } catch (e) {
         errorHandler(io, socket, "answer-riddle-error", `${e}`);
       }

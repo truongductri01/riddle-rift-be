@@ -42,7 +42,7 @@ module.exports = (io, socket) => {
           gameId,
         });
 
-        io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, gameId);
+        // io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, gameId);
       } catch (e) {
         console.log(e);
         errorHandler(io, socket, "fail_to_create", `${e}`);

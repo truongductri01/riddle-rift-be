@@ -89,7 +89,7 @@ module.exports = (io, socket, eventEmitter) => {
       currentRound: updatedCurrentRound,
       cards: updatedCards,
     });
-    io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, game.id);
+    io.to(socket.id).emit(eventNames.emit.gameStatusChange, game.id);
   };
 
   const handleAllTeamsReadyAndStartRound = async (gameId) => {
@@ -99,6 +99,8 @@ module.exports = (io, socket, eventEmitter) => {
 
     // when all team are ready
     if (updatedCurrentRound.readyTeams.length === config.teams.length) {
+      io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, game.id);
+
       // generate riddle
       let riddle = riddleFactoryGenerate(
         riddleQuestionTypes.RANDOM

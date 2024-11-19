@@ -36,7 +36,7 @@ module.exports = (io, socket, eventEmitter) => {
 
       // broadcast to all in the room about joining
       socket.join(`${game.id}`);
-      io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, game.id);
+      io.to(socket.id).emit(eventNames.emit.gameStatusChange, game.id);
     } catch (e) {
       errorHandler(io, socket, "team-select-handler-error", `${e}`);
     }
