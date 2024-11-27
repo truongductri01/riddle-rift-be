@@ -7,7 +7,7 @@ module.exports = (io, socket) => {
     try {
       console.log("received create game request >>>", config);
       try {
-        game = {
+        let game = {
           config,
           cards: {},
           currentRound: {},
@@ -15,7 +15,9 @@ module.exports = (io, socket) => {
           players: {},
           socketToPlayers: {},
           history: [],
+          createdAt: new Date().getTime(),
         };
+        console.log("game to be created >>>", game);
 
         // DONE: create team
         if (!config.teams) {

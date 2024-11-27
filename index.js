@@ -4,20 +4,14 @@ const { Server } = require("socket.io");
 
 const app = express();
 const http = require("http");
-const socketV2 = require("./socketV2/socketV2");
 const socketV3 = require("./serverV3/socketV3");
-const actionHandler = require("./socketV2/actionHandler/actionHandler");
-const mockGame = require("./socketV2/actionHandler/mockGame");
+const { getGame, getCompletedGame } = require("./api/gameApis");
+const httpRequestsV3 = require("./serverV3/httpRequestsV3");
+const EventEmitter = require("events");
 const {
   createCards,
   dealCardsForTeam,
-} = require("./socketV2/helpers/createCards2");
-const cardTypes = require("./socketV2/actionHandler/types/cardTypes");
-const { getGame } = require("./api/gameApis");
-const mockGame1 = require("./socketV2/mockGames/mockGame1");
-const errorHandler = require("./socketV2/errorHandler");
-const httpRequestsV3 = require("./serverV3/httpRequestsV3");
-const EventEmitter = require("events");
+} = require("./serverV3/helpers/createCards2");
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -34,6 +28,10 @@ app.get("/", async (req, res) => {
     let { gameId } = req.query;
 
     if (gameId) {
+      let completedGame = await getCompletedGame(gameId);
+      if (completedGame) {
+        return res.json(completedGame);
+      }
       return res.json(await getGame(gameId));
     } else {
       return res.json({});

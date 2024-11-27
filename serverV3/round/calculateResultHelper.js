@@ -85,6 +85,7 @@ const checkFinalWinner = async (io, socket, gameId, result) => {
 
   if (teamsMoreThanOneHealthCount === 1) {
     updatedGame = { ...updatedGame, finalWinner };
+    await storeCompletedGameRequest(updatedGame);
     await storeGameRequest(updatedGame);
     io.to(`${game.id}`).emit(eventNames.emit.gameStatusChange, game.id);
   }

@@ -1,6 +1,6 @@
 const { db } = require("../firebase");
 const { collection, doc, setDoc, getDoc } = require("firebase/firestore");
-const gameStates = require("../socketV2/helpers/gameStates");
+const gameStates = require("../serverV3/helpers/gameStates");
 
 /**
  *
@@ -22,6 +22,23 @@ const gameStates = require("../socketV2/helpers/gameStates");
 const getGame = async (gameId = "game1") => {
   try {
     let gameDoc = doc(db, "games", gameId);
+    let gameSnapshot = await getDoc(gameDoc);
+
+    if (gameSnapshot.exists()) {
+      return gameSnapshot.data();
+    }
+  } catch (e) {
+    console.log("error with get game>>>", e);
+    return {};
+  }
+};
+
+/**
+ * @returns {Promise<GameData>}
+ */
+const getCompletedGame = async (gameId = "game1") => {
+  try {
+    let gameDoc = doc(db, "completedGames", gameId);
     let gameSnapshot = await getDoc(gameDoc);
 
     if (gameSnapshot.exists()) {
@@ -70,7 +87,8 @@ const storeCompletedGameRequest = async (game, gameId = null) => {
     await setDoc(gameDoc, {
       ...game,
       id: gameDoc.id,
-      state: gameStates.RUNNING,
+      state: gameStates.ENDED,
+      finishedAt: new Date().getTime(),
     });
 
     return gameDoc.id;
@@ -79,4 +97,9 @@ const storeCompletedGameRequest = async (game, gameId = null) => {
   }
 };
 
-module.exports = { getGame, storeGameRequest, storeCompletedGameRequest };
+module.exports = {
+  getGame,
+  getCompletedGame,
+  storeGameRequest,
+  storeCompletedGameRequest,
+};
